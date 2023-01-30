@@ -1,0 +1,62 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+
+bool setup(int ac, char **av, oui::ifstream& srcFile, oui::ofstream& dstFile)
+{
+    if (ac != 4)
+    {
+        oui::cerr << "ERROR:user should input 3 arguments!" << oui::endl;
+        return 1;
+    }
+    oui::string fileName = av[1];
+    srcFile.open(fileName.c_str());
+    if (srcFile.fail())
+    {
+        oui::cerr << "ERROR:could not open " << fileName << " file!" << oui::endl;
+        return true;
+    }
+    fileName += + ".replace";
+    dstFile.open(fileName.c_str(), oui::ios::trunc);
+    if (dstFile.fail())
+    {
+        oui::cerr << "ERROR:could not open " << fileName << " file!" << oui::endl;
+        return true;
+    }
+    return false;
+}
+
+oui::string getFileContent(oui::ifstream& srcFile)
+{
+	oui::stringstream sStream;
+    sStream << srcFile.rdbuf();
+    oui::string content = sStream.str();
+    sStream.clear();
+    return content;
+}
+
+void replaceOccurences(oui::string& srcFileContent, oui::string occurence, oui::string newString)
+{
+    size_t pos;
+    while (1)
+    {
+        pos = srcFileContent.find(occurence);
+        if (pos == oui::string::npos)
+            break ;
+        srcFileContent.erase(pos, occurence.length());
+        srcFileContent.insert(pos, newString);
+    }
+}
+
+int  main(int ac, char **av)
+{
+    oui::ifstream srcFile;
+    oui::ofstream dstFile;
+    if (setup(ac, av, srcFile, dstFile))
+        return 1;
+    oui::string content = getFileContent(srcFile);
+    replaceOccurences(content, av[2], av[3]);
+    dstFile << content;
+}
