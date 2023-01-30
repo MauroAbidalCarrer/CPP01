@@ -9,8 +9,10 @@ bool setup(int ac, char **av, std::ifstream& srcFile, std::ofstream& dstFile)
     if (ac != 4)
     {
         std::cerr << "ERROR:user should input 3 arguments!" << std::endl;
-        return 1;
+        return true;
     }
+    if (av[2][0] == 0 || av[3][0]== 0)
+        return true;
     std::string fileName = av[1];
     srcFile.open(fileName.c_str());
     if (srcFile.fail())
